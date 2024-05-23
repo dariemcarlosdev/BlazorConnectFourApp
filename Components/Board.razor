@@ -1,0 +1,51 @@
+﻿@inject GameState gameState
+<HeadContent>
+    <style>
+        :root {
+            --board-bg: yellow;  /** the color of the board **/
+            --player1: red;      /** Player 1's piece color **/
+            --player2: blue;     /** Player 2's piece color **/
+        }
+    </style>
+</HeadContent>
+<!--
+     place some controls that allow players to choose a column and call new PlayPiece method.
+     We'll use the "🔽" character to indicate that you can drop a piece in this column.
+     The @onclick attribute specifies an event handler for the click event.
+     But to handle UI events, a Blazor component needs to be rendered using an interactive render mode.
+     By default, Blazor components are rendered statically from the server. We can apply an interactive render mode to a component using the rendermode attribute
+     Update the Board component on the Home page to use the InteractiveServer render mode.
+-->
+<nav>
+    @for (byte i = 0; i < 7; i++)
+    {
+        var col = i;
+        <span title="Click to play a piece" @onclick="() => PlayPiece(col)">🔽</span>
+    }
+</nav>
+<div class="">
+    <div class="board">
+        @for (var i = 0; i < 42; i++)
+        {
+                
+                    <span class="@pieces[i]"></span>
+           
+        }
+</div>
+</div>
+@code {
+    private string[] pieces = new string[42];
+    
+    private void PlayPiece(byte col)
+    {
+        var player = gameState.PlayerTurn;
+        var turn = gameState.CurrentTurn;
+        var landingRow = gameState.PlayPiece(col);
+        pieces[turn] = $"player{player} col{col} drop{landingRow}";
+    }
+    protected override void OnInitialized()
+    {
+        gameState.ResetBoard();
+        
+    }
+}
